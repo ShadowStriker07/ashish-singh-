@@ -1,0 +1,1016 @@
+# ashish-singh- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Clone</title>
+   
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/framer-motion/dist/framer-motion.js"></script>
+  
+    <script src="https://unpkg.com/@heroicons/react@2.0.16/outline/index.js"></script>
+    <script src="https://unpkg.com/@heroicons/react@2.0.16/solid/index.js"></script>
+    <style>
+       
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: #141414;
+            color: white;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        
+       
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+       
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        
+        .netflix-red {
+            color: #e50914;
+        }
+        
+        .bg-netflix-red {
+            background-color: #e50914;
+        }
+        
+        .hover\:bg-netflix-red:hover {
+            background-color: #b20710;
+        }
+        
+        
+        .gradient-bg {
+            background: linear-gradient(to bottom, rgba(20, 20, 20, 0.8) 0%, rgba(20, 20, 20, 0.6) 50%, rgba(20, 20, 20, 0.8) 100%);
+        }
+        
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #141414;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #e50914;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b20710;
+        }
+        
+        
+        .loading {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(229, 9, 20, 0.3);
+            border-radius: 50%;
+            border-top-color: #e50914;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        
+        .scale-on-hover {
+            transition: transform 0.3s ease;
+        }
+        
+        .scale-on-hover:hover {
+            transform: scale(1.05);
+        }
+        
+        
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body class="bg-[#141414] text-white">
+   
+    <header id="header" class="fixed top-0 w-full z-50 transition-all duration-300 gradient-bg">
+        <div class="flex items-center justify-between px-4 py-2 md:px-8 md:py-4">
+           
+            <div class="flex items-center space-x-4 md:space-x-8">
+                <div class="text-3xl font-bold netflix-red cursor-pointer">NETFLIX</div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#home" class="text-white hover:text-gray-300 transition-colors duration-200">Home</a>
+                    <a href="#tv-shows" class="text-white hover:text-gray-300 transition-colors duration-200">TV Shows</a>
+                    <a href="#movies" class="text-white hover:text-gray-300 transition-colors duration-200">Movies</a>
+                    <a href="#new" class="text-white hover:text-gray-300 transition-colors duration-200">New & Popular</a>
+                    <a href="#my-list" class="text-white hover:text-gray-300 transition-colors duration-200">My List</a>
+                </nav>
+            </div>
+
+            
+            <div class="flex items-center space-x-4 md:space-x-6">
+                <button onclick="toggleSearch()" class="text-white hover:text-gray-300 transition-colors duration-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+                
+                <button onclick="toggleNotifications()" class="text-white hover:text-gray-300 transition-colors duration-200 relative">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                    </svg>
+                    <span class="absolute -top-1 -right-1 bg-netflix-red text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+                </button>
+                
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="toggleProfileMenu()">
+                    <img src="https://i.pravatar.cc/32?img=1" alt="Profile" class="w-8 h-8 rounded">
+                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div id="searchBar" class="hidden px-4 md:px-8 py-3">
+            <div class="relative">
+                <input type="text" 
+                       placeholder="Search for movies, TV shows..." 
+                       class="w-full p-3 bg-gray-800 text-white rounded-md pl-10 focus:outline-none focus:ring-2 focus:ring-netflix-red"
+                       oninput="searchMovies(this.value)">
+                <svg class="absolute left-3 top-3 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <div id="searchResults" class="absolute mt-2 w-full max-w-2xl bg-gray-900 rounded-md shadow-lg hidden"></div>
+        </div>
+        
+        
+        <div id="profileMenu" class="absolute right-4 mt-2 w-48 bg-gray-900 rounded-md shadow-lg hidden">
+            <div class="py-1">
+                <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-800">Profile</a>
+                <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-800">Account</a>
+                <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-800">Help Center</a>
+                <div class="border-t border-gray-700"></div>
+                <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-800" onclick="logout()">Sign out of Netflix</a>
+            </div>
+        </div>
+    </header>
+
+   
+    <div class="md:hidden fixed bottom-0 w-full bg-gray-900 border-t border-gray-800 z-40">
+        <div class="flex justify-around py-3">
+            <a href="#home" class="text-white flex flex-col items-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                </svg>
+                <span class="text-xs mt-1">Home</span>
+            </a>
+            <a href="#search" class="text-white flex flex-col items-center" onclick="toggleSearch()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span class="text-xs mt-1">Search</span>
+            </a>
+            <a href="#my-list" class="text-white flex flex-col items-center">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                </svg>
+                <span class="text-xs mt-1">My List</span>
+            </a>
+            <a href="#profile" class="text-white flex flex-col items-center" onclick="toggleProfileMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </div>
+
+   
+    <main class="pt-16 pb-20 md:pb-0">
+       
+        <section id="banner" class="relative h-[60vh] md:h-[80vh] w-full overflow-hidden fade-in">
+            <div class="absolute inset-0">
+                <img id="bannerImage" 
+                     src="https://image.tmdb.org/t/p/original/56v2KjBlU4XaOv9rVYEQypROD7P.jpg" 
+                     alt="Featured Movie"
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
+                <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#141414] to-transparent"></div>
+            </div>
+            
+            <div class="relative z-10 h-full flex flex-col justify-center px-4 md:px-12 lg:px-24 max-w-3xl">
+                <h1 id="bannerTitle" class="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+                    Stranger Things
+                </h1>
+                
+                <p id="bannerDescription" class="text-base md:text-lg text-gray-200 mb-6">
+                    When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.
+                </p>
+
+                <div class="flex flex-wrap gap-4">
+                    <button onclick="playMovie()" class="flex items-center bg-white text-black px-6 py-2 md:px-8 md:py-3 rounded-md hover:bg-gray-200 transition-colors duration-200">
+                        <svg class="w-5 h-5 md:w-6 md:h-6 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="font-semibold">Play</span>
+                    </button>
+                    <button onclick="showMoreInfo()" class="flex items-center bg-gray-500/70 text-white px-6 py-2 md:px-8 md:py-3 rounded-md hover:bg-gray-500 transition-colors duration-200">
+                        <svg class="w-5 h-5 md:w-6 md:h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span class="font-semibold">More Info</span>
+                    </button>
+                </div>
+
+                <div class="mt-6 flex items-center space-x-4 text-gray-300 text-sm md:text-base">
+                    <span class="text-green-500 font-semibold">98% Match</span>
+                    <span>2016</span>
+                    <span class="border border-gray-400 px-2 py-0.5 text-xs">16+</span>
+                    <span>4 Seasons</span>
+                    <span class="border border-gray-400 px-2 py-0.5 text-xs">HD</span>
+                </div>
+            </div>
+        </section>
+
+       
+        <section class="mt-6 md:mt-8 px-4 md:px-12">
+           
+            <div class="mb-8">
+                <h2 class="text-xl md:text-2xl font-bold mb-4">Netflix Originals</h2>
+                <div class="relative group">
+                    <div class="movies-row flex overflow-x-auto space-x-4 pb-4 scrollbar-hide" id="originalsRow">
+                        
+                    </div>
+                    <button onclick="scrollRow('originalsRow', -1)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-r opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                    <button onclick="scrollRow('originalsRow', 1)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-l opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+           
+            <div class="mb-8">
+                <h2 class="text-xl md:text-2xl font-bold mb-4">Trending Now</h2>
+                <div class="relative group">
+                    <div class="movies-row flex overflow-x-auto space-x-4 pb-4 scrollbar-hide" id="trendingRow">
+                        <!-- Movies will be loaded here -->
+                    </div>
+                    <button onclick="scrollRow('trendingRow', -1)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-r opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                    <button onclick="scrollRow('trendingRow', 1)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-l opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+           
+            <div class="mb-8">
+                <h2 class="text-xl md:text-2xl font-bold mb-4">Top Rated</h2>
+                <div class="relative group">
+                    <div class="movies-row flex overflow-x-auto space-x-4 pb-4 scrollbar-hide" id="topRatedRow">
+                       
+                    </div>
+                    <button onclick="scrollRow('topRatedRow', -1)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-r opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                    <button onclick="scrollRow('topRatedRow', 1)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-l opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            
+            <div class="mb-8">
+                <h2 class="text-xl md:text-2xl font-bold mb-4">Action Movies</h2>
+                <div class="relative group">
+                    <div class="movies-row flex overflow-x-auto space-x-4 pb-4 scrollbar-hide" id="actionRow">
+                       
+                    </div>
+                    <button onclick="scrollRow('actionRow', -1)" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-r opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                    <button onclick="scrollRow('actionRow', 1)" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-l opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        
+        <div id="videoModal" class="fixed inset-0 z-50 hidden modal-backdrop">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-gray-900 rounded-lg w-full max-w-4xl overflow-hidden">
+                    <div class="flex justify-between items-center p-4 border-b border-gray-800">
+                        <h3 class="text-xl font-bold">Now Playing</h3>
+                        <button onclick="closeVideoModal()" class="text-white hover:text-gray-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="aspect-w-16 aspect-h-9">
+                        <div id="videoPlayer" class="bg-black flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="loading mb-4 mx-auto"></div>
+                                <p class="text-white">Loading video...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 id="videoTitle" class="text-lg font-bold mb-2"></h4>
+                        <p id="videoDescription" class="text-gray-300"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div id="infoModal" class="fixed inset-0 z-50 hidden modal-backdrop">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-gray-900 rounded-lg w-full max-w-2xl overflow-hidden">
+                    <div class="relative">
+                        <img id="infoImage" src="" alt="" class="w-full h-64 object-cover">
+                        <button onclick="closeInfoModal()" class="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <h3 id="infoTitle" class="text-2xl font-bold mb-2"></h3>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <span class="text-green-500 font-semibold">98% Match</span>
+                            <span id="infoYear" class="text-gray-300"></span>
+                            <span class="border border-gray-400 px-2 py-0.5 text-xs">HD</span>
+                        </div>
+                        <p id="infoDescription" class="text-gray-300 mb-6"></p>
+                        <div class="flex space-x-4">
+                            <button onclick="playMovieFromInfo()" class="flex-1 bg-netflix-red text-white py-3 rounded font-semibold hover:bg-red-700 transition-colors duration-200">
+                                ▶ Play
+                            </button>
+                            <button onclick="addToList()" class="flex-1 bg-gray-700 text-white py-3 rounded font-semibold hover:bg-gray-600 transition-colors duration-200">
+                                + My List
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+       
+        <div id="loginModal" class="fixed inset-0 z-50 hidden modal-backdrop">
+            <div class="flex items-center justify-center min-h-screen p-4">
+                <div class="bg-gray-900 rounded-lg w-full max-w-md p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-3xl font-bold">Sign In</h3>
+                        <button type="button" title="Close" onclick="closeLoginModal()" class="text-gray-400 hover:text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                        <div>
+                            <input type="email" 
+                                   id="loginEmail"
+                                   placeholder="Email" 
+                                   required
+                                   class="w-full p-3 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-netflix-red">
+                        </div>
+                        
+                        <div>
+                            <input type="password" 
+                                   id="loginPassword"
+                                   placeholder="Password" 
+                                   required
+                                   class="w-full p-3 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-netflix-red">
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-netflix-red text-white py-3 rounded font-semibold hover:bg-red-700 transition-colors duration-200">
+                            Sign In
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 text-center text-gray-400">
+                        <p>New to Netflix? <button onclick="showSignUp()" class="text-white hover:underline">Sign up now</button></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    
+    <footer class="bg-black py-8 px-4 md:px-12 mt-12">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-gray-400 mb-8">
+                <p class="mb-4">Questions? Call 1-800-123-4567</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <a href="#" class="hover:text-white">FAQ</a>
+                    <a href="#" class="hover:text-white">Help Center</a>
+                    <a href="#" class="hover:text-white">Terms of Use</a>
+                    <a href="#" class="hover:text-white">Privacy</a>
+                    <a href="#" class="hover:text-white">Cookie Preferences</a>
+                    <a href="#" class="hover:text-white">Corporate Information</a>
+                    <a href="#" class="hover:text-white">Contact Us</a>
+                    <a href="#" class="hover:text-white">Speed Test</a>
+                </div>
+            </div>
+            <div class="text-gray-400 text-sm">
+                <p>© 2024 Netflix Clone. This is a demo project for educational purposes.</p>
+                <p class="mt-2">All movie data and images are from TMDB (The Movie Database).</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+      
+        const movies = {
+            netflixOriginals: [
+                {
+                    id: 1,
+                    title: "Stranger Things",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/56v2KjBlU4XaOv9rVYEQypROD7P.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/x2LSRK2Cm7MZhjluni1msVJ3wDF.jpg",
+                    overview: "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.",
+                    year: "2016",
+                    rating: "98%",
+                    seasons: "4"
+                },
+                {
+                    id: 2,
+                    title: "The Crown",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/iTQHKziZy9pAAY4hHEDCGPaOvFC.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/iTQHKziZy9pAAY4hHEDCGPaOvFC.jpg",
+                    overview: "Follows the political rivalries and romance of Queen Elizabeth II's reign.",
+                    year: "2016",
+                    rating: "92%",
+                    seasons: "5"
+                },
+                {
+                    id: 3,
+                    title: "Narcos",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/7bmGzQ3MyoI8tQeLDhxXG3N0NxT.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/7bmGzQ3MyoI8tQeLDhxXG3N0NxT.jpg",
+                    overview: "The true story of Colombia's infamously violent and powerful drug cartels.",
+                    year: "2015",
+                    rating: "89%",
+                    seasons: "3"
+                },
+                {
+                    id: 4,
+                    title: "The Witcher",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/7vjaCdMw15FEbXyLQTVa04URsPm.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/7vjaCdMw15FEbXyLQTVa04URsPm.jpg",
+                    overview: "Geralt of Rivia, a mutated monster-hunter for hire, journeys toward his destiny.",
+                    year: "2019",
+                    rating: "81%",
+                    seasons: "3"
+                },
+                {
+                    id: 5,
+                    title: "Money Heist",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/reEMJA1uzscCbkpeRJeTT2bjqUp.jpg",
+                    overview: "An unusual group of robbers attempt to carry out the most perfect robbery.",
+                    year: "2017",
+                    rating: "94%",
+                    seasons: "5"
+                }
+            ],
+            trending: [
+                {
+                    id: 6,
+                    title: "Wednesday",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/9pxG2Z8NFYqGsvWPG1Cg80cHX0p.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/9pxG2Z8NFYqGsvWPG1Cg80cHX0p.jpg",
+                    overview: "Follows Wednesday Addams' years as a student at Nevermore Academy.",
+                    year: "2022",
+                    rating: "85%",
+                    seasons: "1"
+                },
+                {
+                    id: 7,
+                    title: "The Last of Us",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg",
+                    overview: "After a global pandemic destroys civilization, a hardened survivor takes charge of a 14-year-old girl.",
+                    year: "2023",
+                    rating: "96%",
+                    seasons: "1"
+                },
+                {
+                    id: 8,
+                    title: "Peaky Blinders",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/6PX0r5TRRU5y0jZ70y1OtbLYmoD.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/6PX0r5TRRU5y0jZ70y1OtbLYmoD.jpg",
+                    overview: "A gangster family epic set in 1900s England, centering on a gang who sew razor blades in their caps.",
+                    year: "2013",
+                    rating: "92%",
+                    seasons: "6"
+                },
+                {
+                    id: 9,
+                    title: "Breaking Bad",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/ggFHVNu6YYI5L9pCfOacjizRGt.jpg",
+                    overview: "A high school chemistry teacher diagnosed with cancer turns to manufacturing meth.",
+                    year: "2008",
+                    rating: "97%",
+                    seasons: "5"
+                },
+                {
+                    id: 10,
+                    title: "Black Mirror",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/7PRddO6Q2fVj2xH3D6Q2n5Y4VjN.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/7PRddO6Q2fVj2xH3D6Q2n5Y4VjN.jpg",
+                    overview: "An anthology series exploring a twisted, high-tech multiverse.",
+                    year: "2011",
+                    rating: "84%",
+                    seasons: "6"
+                }
+            ],
+            topRated: [
+                {
+                    id: 11,
+                    title: "The Shawshank Redemption",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg",
+                    overview: "Two imprisoned men bond over a number of years, finding solace and eventual redemption.",
+                    year: "1994",
+                    rating: "99%",
+                    duration: "2h 22m"
+                },
+                {
+                    id: 12,
+                    title: "The Godfather",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/rSPw7tgCH9c6NqICZef4kZjFOQ5.jpg",
+                    overview: "The aging patriarch of an organized crime dynasty transfers control to his son.",
+                    year: "1972",
+                    rating: "98%",
+                    duration: "2h 55m"
+                },
+                {
+                    id: 13,
+                    title: "The Dark Knight",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+                    overview: "Batman faces the Joker, a criminal mastermind seeking to undermine order in Gotham.",
+                    year: "2008",
+                    rating: "94%",
+                    duration: "2h 32m"
+                },
+                {
+                    id: 14,
+                    title: "Pulp Fiction",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+                    overview: "The lives of two mob hitmen, a boxer, a gangster and his wife intertwine.",
+                    year: "1994",
+                    rating: "92%",
+                    duration: "2h 34m"
+                },
+                {
+                    id: 15,
+                    title: "Inception",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/s3TBrRGB1iav7gFOCNx3H31MoES.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/s3TBrRGB1iav7gFOCNx3H31MoES.jpg",
+                    overview: "A thief who steals corporate secrets uses dream-sharing technology.",
+                    year: "2010",
+                    rating: "87%",
+                    duration: "2h 28m"
+                }
+            ],
+            action: [
+                {
+                    id: 16,
+                    title: "John Wick: Chapter 4",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg",
+                    overview: "John Wick uncovers a path to defeating The High Table.",
+                    year: "2023",
+                    rating: "94%",
+                    duration: "2h 49m"
+                },
+                {
+                    id: 17,
+                    title: "Mission: Impossible",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/NNxYkU70HPurnNCSiCjYAmacwm.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/NNxYkU70HPurnNCSiCjYAmacwm.jpg",
+                    overview: "Ethan Hunt and his IMF team must track down a dangerous weapon.",
+                    year: "2023",
+                    rating: "96%",
+                    duration: "2h 43m"
+                },
+                {
+                    id: 18,
+                    title: "Extraction 2",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/7gKI9hpEMcZUQpNgKrkDzJpbnNS.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/7gKI9hpEMcZUQpNgKrkDzJpbnNS.jpg",
+                    overview: "Tasked with extracting a family who is at the mercy of a Georgian gangster.",
+                    year: "2023",
+                    rating: "77%",
+                    duration: "2h 2m"
+                },
+                {
+                    id: 19,
+                    title: "The Batman",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg",
+                    overview: "Batman ventures into Gotham City's underworld when a sadistic killer leaves clues.",
+                    year: "2022",
+                    rating: "85%",
+                    duration: "2h 56m"
+                },
+                {
+                    id: 20,
+                    title: "Top Gun: Maverick",
+                    backdrop_path: "https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg",
+                    poster_path: "https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg",
+                    overview: "After thirty years, Maverick is still pushing the envelope as a test pilot.",
+                    year: "2022",
+                    rating: "96%",
+                    duration: "2h 10m"
+                }
+            ]
+        };
+
+       
+        let currentMovie = null;
+        let myList = JSON.parse(localStorage.getItem('myList')) || [];
+
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMovies();
+            setupEventListeners();
+            checkAuth();
+        });
+
+       
+        function loadMovies() {
+        
+            const originalsRow = document.getElementById('originalsRow');
+            movies.netflixOriginals.forEach(movie => {
+                originalsRow.appendChild(createMovieCard(movie, true));
+            });
+
+            
+            const trendingRow = document.getElementById('trendingRow');
+            movies.trending.forEach(movie => {
+                trendingRow.appendChild(createMovieCard(movie, false));
+            });
+
+         
+            const topRatedRow = document.getElementById('topRatedRow');
+            movies.topRated.forEach(movie => {
+                topRatedRow.appendChild(createMovieCard(movie, false));
+            });
+
+            
+            const actionRow = document.getElementById('actionRow');
+            movies.action.forEach(movie => {
+                actionRow.appendChild(createMovieCard(movie, false));
+            });
+        }
+
+        
+        function createMovieCard(movie, isLarge) {
+            const card = document.createElement('div');
+            card.className = `min-w-[150px] md:min-w-[180px] cursor-pointer scale-on-hover ${isLarge ? 'md:min-w-[200px]' : ''}`;
+            card.innerHTML = `
+                <div class="relative rounded overflow-hidden bg-gray-800" onclick="showMovieInfo(${movie.id})">
+                    <img src="${movie.poster_path}" 
+                         alt="${movie.title}"
+                         class="w-full h-full object-cover"
+                         loading="lazy">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                        <div>
+                            <h4 class="text-white font-bold text-sm">${movie.title}</h4>
+                            <div class="flex items-center space-x-2 text-xs text-gray-300 mt-1">
+                                <span class="text-green-500">${movie.rating}</span>
+                                <span>${movie.year}</span>
+                                ${movie.seasons ? `<span>${movie.seasons}</span>` : `<span>${movie.duration}</span>`}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        
+        function scrollRow(rowId, direction) {
+            const row = document.getElementById(rowId);
+            const scrollAmount = 300;
+            row.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
+        }
+
+       
+        function showMovieInfo(movieId) {
+           
+            let movie = null;
+            for (const category in movies) {
+                movie = movies[category].find(m => m.id === movieId);
+                if (movie) break;
+            }
+
+            if (movie) {
+                currentMovie = movie;
+                document.getElementById('infoImage').src = movie.backdrop_path;
+                document.getElementById('infoTitle').textContent = movie.title;
+                document.getElementById('infoYear').textContent = movie.year;
+                document.getElementById('infoDescription').textContent = movie.overview;
+                document.getElementById('infoModal').classList.remove('hidden');
+            }
+        }
+
+       
+        function closeInfoModal() {
+            document.getElementById('infoModal').classList.add('hidden');
+        }
+
+       
+        function playMovieFromInfo() {
+            closeInfoModal();
+            playMovie();
+        }
+
+        
+        function playMovie() {
+            if (!currentMovie) {
+                currentMovie = movies.netflixOriginals[0];
+            }
+            
+            document.getElementById('videoTitle').textContent = currentMovie.title;
+            document.getElementById('videoDescription').textContent = currentMovie.overview;
+            document.getElementById('videoModal').classList.remove('hidden');
+            
+           
+            setTimeout(() => {
+                document.getElementById('videoPlayer').innerHTML = `
+                    <div class="w-full h-full flex items-center justify-center">
+                        <div class="text-center">
+                            <div class="text-6xl mb-4">🎬</div>
+                            <p class="text-xl font-bold">Now Playing: ${currentMovie.title}</p>
+                            <p class="text-gray-400 mt-2">This is a demo. In a real app, the video would play here.</p>
+                            <button onclick="closeVideoModal()" class="mt-4 bg-netflix-red text-white px-6 py-2 rounded hover:bg-red-700">
+                                Close Player
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        
+        function closeVideoModal() {
+            document.getElementById('videoModal').classList.add('hidden');
+            document.getElementById('videoPlayer').innerHTML = `
+                <div class="bg-black flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="loading mb-4 mx-auto"></div>
+                        <p class="text-white">Loading video...</p>
+                    </div>
+                </div>
+            `;
+        }
+
+       
+        function addToList() {
+            if (currentMovie) {
+                if (!myList.find(m => m.id === currentMovie.id)) {
+                    myList.push(currentMovie);
+                    localStorage.setItem('myList', JSON.stringify(myList));
+                    alert(`${currentMovie.title} added to My List!`);
+                } else {
+                    alert(`${currentMovie.title} is already in your list.`);
+                }
+            }
+        }
+
+        
+        function toggleSearch() {
+            const searchBar = document.getElementById('searchBar');
+            searchBar.classList.toggle('hidden');
+            
+            if (!searchBar.classList.contains('hidden')) {
+                document.getElementById('searchBar').querySelector('input').focus();
+            }
+        }
+
+        
+        function searchMovies(query) {
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (query.length < 2) {
+                resultsDiv.classList.add('hidden');
+                return;
+            }
+            
+            const searchResults = [];
+            for (const category in movies) {
+                movies[category].forEach(movie => {
+                    if (movie.title.toLowerCase().includes(query.toLowerCase())) {
+                        searchResults.push(movie);
+                    }
+                });
+            }
+            
+            if (searchResults.length > 0) {
+                resultsDiv.innerHTML = searchResults.map(movie => `
+                    <div class="p-3 hover:bg-gray-800 cursor-pointer flex items-center space-x-3" onclick="showMovieInfo(${movie.id})">
+                        <img src="${movie.poster_path}" alt="${movie.title}" class="w-12 h-16 object-cover rounded">
+                        <div>
+                            <h4 class="text-white font-semibold">${movie.title}</h4>
+                            <p class="text-gray-400 text-sm">${movie.year} • ${movie.rating}</p>
+                        </div>
+                    </div>
+                `).join('');
+                resultsDiv.classList.remove('hidden');
+            } else {
+                resultsDiv.innerHTML = '<div class="p-4 text-center text-gray-400">No results found</div>';
+                resultsDiv.classList.remove('hidden');
+            }
+        }
+
+       
+        function toggleProfileMenu() {
+            const profileMenu = document.getElementById('profileMenu');
+            profileMenu.classList.toggle('hidden');
+        }
+
+        function toggleNotifications() {
+            alert('You have 3 new notifications');
+        }
+
+        
+        function showMoreInfo() {
+            currentMovie = movies.netflixOriginals[0];
+            showMovieInfo(currentMovie.id);
+        }
+
+       
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (email && password) {
+                localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('userEmail', email);
+                alert('Successfully logged in!');
+                closeLoginModal();
+                updateAuthUI();
+            } else {
+                alert('Please enter email and password');
+            }
+        }
+
+        
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            localStorage.removeItem('userEmail');
+            alert('Logged out successfully');
+            updateAuthUI();
+            toggleProfileMenu();
+        }
+
+      
+        function showSignUp() {
+            alert('Sign up feature would be implemented here');
+        }
+
+        
+        function checkAuth() {
+            updateAuthUI();
+        }
+
+       
+        function updateAuthUI() {
+            const isLoggedIn = localStorage.getItem('loggedIn');
+            if (!isLoggedIn) {
+                setTimeout(() => {
+                    document.getElementById('loginModal').classList.remove('hidden');
+                }, 1000);
+            }
+        }
+
+       
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+
+        
+        function setupEventListeners() {
+            
+            document.addEventListener('click', (event) => {
+                if (!event.target.closest('#profileMenu') && !event.target.closest('.flex.items-center.space-x-2.cursor-pointer')) {
+                    document.getElementById('profileMenu').classList.add('hidden');
+                }
+                
+                if (!event.target.closest('#searchBar') && !event.target.closest('button[onclick="toggleSearch()"]')) {
+                    document.getElementById('searchBar').classList.add('hidden');
+                    document.getElementById('searchResults').classList.add('hidden');
+                }
+            });
+
+            
+            window.addEventListener('scroll', () => {
+                const header = document.getElementById('header');
+                if (window.scrollY > 50) {
+                    header.classList.remove('gradient-bg');
+                    header.classList.add('bg-[#141414]');
+                } else {
+                    header.classList.add('gradient-bg');
+                    header.classList.remove('bg-[#141414]');
+                }
+            });
+
+            
+            let bannerIndex = 0;
+            const bannerMovies = [
+                movies.netflixOriginals[0],
+                movies.trending[0],
+                movies.topRated[0],
+                movies.action[0]
+            ];
+
+            setInterval(() => {
+                bannerIndex = (bannerIndex + 1) % bannerMovies.length;
+                const movie = bannerMovies[bannerIndex];
+                
+                document.getElementById('bannerTitle').textContent = movie.title;
+                document.getElementById('bannerDescription').textContent = movie.overview;
+                document.getElementById('bannerImage').src = movie.backdrop_path;
+                
+               
+                currentMovie = movie;
+            }, 10000); 
+        }
+
+        
+        document.addEventListener('keydown', (event) => {
+           
+            if (event.key === 'Escape') {
+                closeVideoModal();
+                closeInfoModal();
+                closeLoginModal();
+                document.getElementById('searchBar').classList.add('hidden');
+                document.getElementById('profileMenu').classList.add('hidden');
+            }
+            
+           
+            if ((event.ctrlKey && event.key === 'k') || event.key === '/') {
+                event.preventDefault();
+                toggleSearch();
+            }
+        });
+    </script>
+</body>
+</html>
