@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="project2.css">
+
+</head>
+<body>
+    <h1>
+       Bat Ball Stump Game
+    </h1>
+    <button class="button1"
+    
+    onclick="
+    let randomNumber=Math.random()*3;
+
+    computerChoice =genrateComputerChoice();
+   
+   
+   
+   let resultMsg= getResult('Bat',computerChoice);
+    
+    alert(`You have chose Bat. Computer chose ${computerChoice} and ${resultMsg}`);
+   " > Bat</button>
+
+    <button class="button2"
+
+    onclick="
+      randomNumber=Math.random()*3;
+
+     computerChoice= genrateComputerChoice();
+
+     resultMsg= getResult('Ball',computerChoice);
+   
+    alert(`You have chose Ball. Computer chose ${computerChoice} and ${resultMsg}`);
+    "> Ball</button>
+
+    <button class="button3"
+
+     onclick="
+
+       randomNumber=Math.random()*3;
+
+       computerChoice=genrateComputerChoice();
+         resultMsg= getResult('stump',computerChoice);
+
+    alert(`You have chose Stump. Computer chose ${computerChoice} and ${resultMsg}`);
+    "> stump</button>
+
+    <script>
+        function genrateComputerChoice(){
+            let randomNumber=Math.random()*3;
+           
+            if (randomNumber>0 && randomNumber<=1){
+                return'Bat';
+            }
+            else if (randomNumber >1 && randomNumber<=2){
+                     return'Ball';
+             }
+            else{
+                return'stump';
+            }
+           
+        }
+        function getResult(userChoice, computerChoice){
+            if(userChoice===computerChoice){
+                return 'Match Draw';
+            }
+            if(
+                (userChoice==='Bat' && computerChoice==='Ball') ||
+                (userChoice==='Ball' && computerChoice==='stump') ||
+                (userChoice==='stump' && computerChoice==='Bat')
+            ){
+                return 'You Win';
+            } else {
+                return 'You Lose';
+            }
+        }
+        function playGame(userChoice){
+            const computerChoice = genrateComputerChoice();
+            const resultMsg = getResult(userChoice, computerChoice);
+            alert(`You have chose ${userChoice}. Computer chose ${computerChoice} and ${resultMsg}`);
+        }
+
+    </script>
+</body>
+</html>
