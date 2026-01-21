@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myntra Clone - Online Shopping for Fashion</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo">
+                    <a href="index.html">MYNTRA</a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#" onclick="filterProducts('Men')">Men</a></li>
+                    <li><a href="#" onclick="filterProducts('Women')">Women</a></li>
+                    <li><a href="#" onclick="filterProducts('Kids')">Kids</a></li>
+                    <li><a href="#">Home & Living</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <div class="search-box">
+                    <input type="text" placeholder="Search for products, brands and more" id="searchInput">
+                    <button type="button" onclick="searchProducts()" aria-label="Search"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="nav-icons">
+                    <a href="#" id="profileBtn"><i class="far fa-user"></i> <span id="profileText">Profile</span></a>
+                    <a href="#" id="wishlistBtn"><i class="far fa-heart"></i> Wishlist</a>
+                    <a href="#" id="bagBtn"><i class="fas fa-shopping-bag"></i> <span id="cartCount">Bag</span></a>
+                    <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login/Register Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="openTab('login')">Login</button>
+                <button class="tab-btn" onclick="openTab('register')">Register</button>
+            </div>
+            
+            <div id="login" class="tab-content active">
+                <h3>Login</h3>
+                <form id="loginForm">
+                    <input type="email" placeholder="Email" id="loginEmail" required>
+                    <input type="password" placeholder="Password" id="loginPassword" required>
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+                <p class="demo-text">
+                    Demo: test@example.com / password123
+                </p>
+            </div>
+            
+            <div id="register" class="tab-content">
+                <h3>Register</h3>
+                <form id="registerForm">
+                    <input type="text" placeholder="Full Name" id="regName" required>
+                    <input type="email" placeholder="Email" id="regEmail" required>
+                    <input type="password" placeholder="Password (min 6 characters)" id="regPassword" required>
+                    <input type="tel" placeholder="Phone Number" id="regPhone">
+                    <button type="submit" class="btn-primary">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-slider">
+                <div class="slide active">
+                    <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Fashion Sale">
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="categories">
+            <h2>SHOP BY CATEGORY</h2>
+            <div class="category-grid">
+                <div class="category-card" onclick="filterProducts('Men')">
+                    <img src="https://images.unsplash.com/photo-1520975916090-3105956dac38?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Men">
+                    <h3>Men</h3>
+                </div>
+                <div class="category-card" onclick="filterProducts('Women')">
+                    <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Women">
+                    <h3>Women</h3>
+                </div>
+                <div class="category-card" onclick="filterProducts('Kids')">
+                    <img src="https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Kids">
+                    <h3>Kids</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section class="products">
+            <div class="section-header">
+                <h2>TRENDING NOW</h2>
+                <div class="filters">
+                    <select id="categoryFilter" onchange="filterProducts()" aria-label="Filter by category">
+                        <option value="">All Categories</option>
+                        <option value="Men">Men</option>
+                        <option value="Women">Women</option>
+                        <option value="Kids">Kids</option>
+                    </select>
+                    <select id="sortFilter" onchange="sortProducts()" aria-label="Sort products">
+                        <option value="">Sort By</option>
+                        <option value="price_asc">Price: Low to High</option>
+                        <option value="price_desc">Price: High to Low</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="products-grid" id="productsContainer">
+                <!-- Products will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Cart Modal -->
+        <div id="cartModal" class="modal">
+            <div class="modal-content cart-modal">
+                <span class="close">&times;</span>
+                <h2>Your Shopping Bag</h2>
+                <div class="cart-items" id="cartItems">
+                    <div id="emptyCartMessage" class="empty-cart-message">
+                        <i class="fas fa-shopping-bag cart-bag-icon"></i>
+                        <h3>Your bag is empty</h3>
+                        <p>Add items to get started</p>
+                    </div>
+                </div>
+                <div class="cart-summary" id="cartSummary">
+                    <div class="total">
+                        <h3>Total: ₹<span id="cartTotal">0</span></h3>
+                    </div>
+                    <button class="btn-primary" onclick="checkout()">Checkout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ONLINE SHOPPING</h4>
+                <ul>
+                    <li><a href="#" onclick="filterProducts('Men')">Men</a></li>
+                    <li><a href="#" onclick="filterProducts('Women')">Women</a></li>
+                    <li><a href="#" onclick="filterProducts('Kids')">Kids</a></li>
+                    <li><a href="#">Home & Living</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>CUSTOMER POLICIES</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">T&C</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>EXPERIENCE MYNTRA APP ON MOBILE</h4>
+                <div class="app-download">
+                    <img src="https://constant.myntassets.com/web/assets/img/80cc455a-92d2-4b5c-a038-7da0d92af33f1539674178924-google_play.png" alt="Google Play">
+                    <img src="https://constant.myntassets.com/web/assets/img/bc5e11ad-0250-420a-ac71-115a57ca35d51539674178941-apple_store.png" alt="App Store">
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Myntra Clone. Developed for educational purposes.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
